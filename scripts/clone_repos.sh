@@ -6,20 +6,15 @@ if ! command -v jq &> /dev/null; then
   exit 1
 fi
 
-# Specify the JSON file path
 json_file="path/to/your/json/file.json"
 
-# Iterate over the JSON array using jq
 jq -c '.[]' "$json_file" | while IFS= read -r element; do
-  # Process each element within the loop
   echo "Processing element:"
   echo "$element"
 
   git clone "$element"
 
-  // run ck on element
+  java -jar ck-0.7.1-SNAPSHOT-jar-with-dependencies.jar ./"$element" true 0 true ./data_analysis
 
   rm -rf ./"$element"
-
-  # Perform any other operations or transformations as needed
 done
