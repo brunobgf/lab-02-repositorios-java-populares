@@ -5,6 +5,8 @@ import os
 import dotenv
 import json
 import os
+from git import Repo
+from pygount import SourceAnalysis
 
 
 def run_query(query, headers):
@@ -25,6 +27,19 @@ def calculate_age(date_of_birth):
     age = difference.days // 365
 
     return age
+
+
+def clone_repository(git_url):
+  path_cloned_repositories = './cloned_repositories'
+
+  if not os.path.exists(path_cloned_repositories):
+    os.mkdir(path_cloned_repositories)
+
+  repo_name = git_url.split('/')[-1].split('.')[0]
+  os.mkdir(fr'{path_cloned_repositories}/{repo_name}')
+
+  Repo.clone_from(git_url, fr'{path_cloned_repositories}/{repo_name}')
+
 
 index = 1
 data = []
