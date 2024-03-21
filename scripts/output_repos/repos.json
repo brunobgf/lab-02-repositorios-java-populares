@@ -1,0 +1,24 @@
+[
+    {
+        "nameWithOwner": "Snailclimb/JavaGuide",
+        "stargazerCount": 141919,
+        "sshUrl": "git@github.com:m4theuzzz/Lab3.git",
+        "languages": {
+            "edges": [
+                {
+                    "node": {
+                        "name": "Java"
+                    }
+                }
+            ]
+        },
+        "primaryLanguage": {
+            "name": "Java"
+        },
+        "createdAt": "2018-05-07T13:27:00Z",
+        "releases": {
+            "totalCount": 0,
+            "nodes": []
+        }
+    }
+]

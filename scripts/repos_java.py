@@ -8,14 +8,13 @@ import os
 from git import Repo
 from pygount import SourceAnalysis
 
-
 def run_query(query, headers):
     request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
     if request.status_code == 200:
         return request.json()
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, request.text))
-    
+
 
 def calculate_age(date_of_birth):
     current_date = datetime.utcnow()
@@ -36,15 +35,15 @@ def clone_repository(git_url):
     os.mkdir(path_cloned_repositories)
 
   repo_name = git_url.split('/')[-1].split('.')[0]
-  os.mkdir(fr'{path_cloned_repositories}/{repo_name}')
+  os.mkdir(path_cloned_repositories + '//' + repo_name)
 
-  Repo.clone_from(git_url, fr'{path_cloned_repositories}/{repo_name}')
+  Repo.clone_from(git_url, path_cloned_repositories + '//' + repo_name)
 
 
 index = 1
 data = []
 end_cursor = "null"
-num_repos = 1000
+num_repos = 20
 while len(data) < num_repos:
   query = '''{
     search (
@@ -62,7 +61,7 @@ while len(data) < num_repos:
           ... on Repository {
             nameWithOwner
             stargazerCount
-            url
+            sshUrl
             languages(first: 1) {
               edges {
                 node {
@@ -87,7 +86,7 @@ while len(data) < num_repos:
   }
   '''
   dotenv.load_dotenv()
-  headers = {"Authorization": f"Bearer {os.environ['API_TOKEN']}"}
+  headers = {"Authorization": "Bearer " + os.environ['API_TOKEN']}
 
   # print(json.dumps(run_query(query, headers), indent=3))
   # input()
@@ -105,7 +104,7 @@ while len(data) < num_repos:
       data.append({
           'name': repo['nameWithOwner'].split('/')[1],
           'owner': repo['nameWithOwner'].split('/')[0],
-          'url': repo['url'],
+          'url': repo['sshUrl'],
           'stars': repo['stargazerCount'],
           'age': calculate_age(repo['createdAt']),
           'primary_language': repo['primaryLanguage'],
@@ -118,9 +117,9 @@ print(json.dumps(data, indent=1))
 
 df = pd.DataFrame(data=data)
 
-if not os.path.exists('./output_csv_repos'):
-  os.mkdir('./output_csv_repos')
+if not os.path.exists('./output_repos'):
+  os.mkdir('./output_repos')
 
-df.to_csv('./output_csv_repos/repos.csv', index=False)
+df.to_json('./output_repos/repos.json', index=False)
 
 print('Finished')
