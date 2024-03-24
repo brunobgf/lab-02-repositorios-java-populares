@@ -6,7 +6,7 @@ import dotenv
 import json
 import os
 from git import Repo
-from pygount import SourceAnalysis
+
 
 def run_query(query, headers):
     request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
@@ -43,7 +43,7 @@ def clone_repository(git_url):
 index = 1
 data = []
 end_cursor = "null"
-num_repos = 20
+num_repos = 1000
 while len(data) < num_repos:
   query = '''{
     search (
@@ -113,13 +113,14 @@ while len(data) < num_repos:
       })
       index += 1
 
-print(json.dumps(data, indent=1))
+# print(json.dumps(data, indent=1))
 
 df = pd.DataFrame(data=data)
 
 if not os.path.exists('./output_repos'):
   os.mkdir('./output_repos')
 
-df.to_json('./output_repos/repos.json', index=False)
+# df.to_json('./output_repos/repos.json', index=False)
+df.to_csv('./scripts/output_repos/repos.csv', index=False)
 
 print('Finished')
